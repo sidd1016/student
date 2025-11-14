@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: student-app
+data:
+  MONGO_URI: "mongodb://mongo-service.student-app.svc.cluster.local:27017/studentsdb"
