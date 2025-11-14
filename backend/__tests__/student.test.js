@@ -1,8 +1,12 @@
 import request from "supertest";
-import app from "../server.js";
+import { app, server } from "../server.js";
+
+afterAll(() => {
+  server.close(); // prevent open handle error
+});
 
 describe("Student API", () => {
-  test("GET /api/students returns status 200", async () => {
+  test("GET /api/students returns 200", async () => {
     const res = await request(app).get("/api/students");
     expect(res.statusCode).toBe(200);
   });

@@ -14,4 +14,4 @@ app.use("/api/students", studentRoutes);
 const PORT = 3000;
 const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-export default app;
+export { app, server };
