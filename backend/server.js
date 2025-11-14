@@ -12,4 +12,6 @@ connectDB();
 app.use("/api/students", studentRoutes);
 
 const PORT = 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+export default app;
