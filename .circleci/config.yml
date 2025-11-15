@@ -5,6 +5,7 @@ orbs:
   docker: circleci/docker@2.1.4
 
 jobs:
+
   backend-test:
     docker:
       - image: cimg/node:18.17
@@ -17,7 +18,8 @@ jobs:
             npm install
       - run:
           name: Backend Test Step (Skipped)
-          command: echo "No tests to run"
+          command: echo "No backend tests to run"
+
 
   frontend-build:
     docker:
@@ -30,7 +32,7 @@ jobs:
             cd frontend
             npm install
       - run:
-          name: Fix permissions
+          name: Fix Permissions
           command: |
             chmod -R 755 frontend/node_modules/.bin || true
       - run:
@@ -39,14 +41,26 @@ jobs:
             cd frontend
             npm run build
 
+
   docker-build-push:
     docker:
       - image: cimg/base:stable
     steps:
       - checkout
 
-      # ❗ FIXED: Remove unsupported docker version
-      - setup_remote_docker: {}
+      - setup_remote_docker:
+          docker_layer_caching: false
+
+      - run:
+          name: Debug - Print Env Vars
+          command: |
+            echo "USERNAME=$DOCKERHUB_USERNAME"
+            echo "TOKEN LENGTH=${#DOCKERHUB_TOKEN}"
+
+      - run:
+          name: Docker Login
+          command: |
+            echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
 
       - run:
           name: Build Backend Docker Image
@@ -54,14 +68,10 @@ jobs:
             docker build -t sidd0227/student-backend:ci ./backend
 
       - run:
-          name: Login to DockerHub
-          command: |
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-
-      - run:
           name: Push Backend Image
           command: |
             docker push sidd0227/student-backend:ci
+
 
 workflows:
   version: 2
