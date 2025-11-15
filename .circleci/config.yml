@@ -39,7 +39,7 @@ jobs:
             cd frontend
             npm run build
 
-  # docker-build-push:
+  docker-build-push:
     # docker:
     #   - image: cimg/base:stable
     # steps:
