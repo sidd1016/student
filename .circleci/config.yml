@@ -32,14 +32,14 @@ jobs:
             cd frontend
             npm install
       - run:
+          name: Fix permissions
+          command: |
+            chmod -R 755 frontend/node_modules/.bin || true
+      - run:
           name: Build Frontend
           command: |
             cd frontend
             npm run build
-      - persist_to_workspace:
-          root: .
-          paths:
-            - frontend/build
 
   docker-build-push:
     docker:
