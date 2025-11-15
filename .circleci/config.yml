@@ -39,25 +39,25 @@ jobs:
             cd frontend
             npm run build
 
-  docker-build-push:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.14
-      - run:
-          name: Build Backend Docker Image
-          command: |
-            docker build -t sidd0227/student-backend:ci ./backend
-      - run:
-          name: Login to DockerHub
-          command: |
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-      - run:
-          name: Push Backend Image
-          command: |
-            docker push sidd0227/student-backend:ci
+  # docker-build-push:
+    # docker:
+    #   - image: cimg/base:stable
+    # steps:
+    #   - checkout
+    #   - setup_remote_docker:
+    #       version: 20.10.14
+    #   - run:
+    #       name: Build Backend Docker Image
+    #       command: |
+    #         docker build -t sidd0227/student-backend:ci ./backend
+    #   - run:
+    #       name: Login to DockerHub
+    #       command: |
+    #         echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+    #   - run:
+    #       name: Push Backend Image
+    #       command: |
+    #         docker push sidd0227/student-backend:ci
 
 workflows:
   version: 2
