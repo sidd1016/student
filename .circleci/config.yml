@@ -1,0 +1,73 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+  docker: circleci/docker@2.1.4
+
+jobs:
+  backend-test:
+    docker:
+      - image: cimg/node:18.17
+    steps:
+      - checkout
+      - run:
+          name: Install Backend Dependencies
+          command: |
+            cd backend
+            npm install
+      - run:
+          name: Run Backend Tests
+          command: |
+            cd backend
+            npm test
+
+  frontend-build:
+    docker:
+      - image: cimg/node:18.17
+    steps:
+      - checkout
+      - run:
+          name: Install Frontend Dependencies
+          command: |
+            cd frontend
+            npm install
+      - run:
+          name: Build Frontend
+          command: |
+            cd frontend
+            npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend/build
+
+  docker-build-push:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+      - run:
+          name: Build Backend Docker Image
+          command: |
+            docker build -t sidd0227/student-backend:ci ./backend
+      - run:
+          name: Login to DockerHub
+          command: |
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+      - run:
+          name: Push Backend Image
+          command: |
+            docker push sidd0227/student-backend:ci
+
+workflows:
+  version: 2
+  ci_pipeline:
+    jobs:
+      - backend-test
+      - frontend-build
+      - docker-build-push:
+          requires:
+            - backend-test
+            - frontend-build
