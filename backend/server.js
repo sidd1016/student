@@ -8,10 +8,17 @@ app.use(cors());
 app.use(express.json());
 
 connectDB();
-
 app.use("/api/students", studentRoutes);
 
 const PORT = 3000;
-const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+let server = null;
+
+// ❗ Start server only when NOT running tests
+if (process.env.NODE_ENV !== "test") {
+  server = app.listen(PORT, () =>
+    console.log(`Server running on port ${PORT}`)
+  );
+}
 
 export { app, server };
